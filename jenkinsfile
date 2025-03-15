@@ -2,7 +2,7 @@ pipeline {
     agent any  // Runs on any available Jenkins agent
 
     environment {
-        REPO_URL = 'https://github.com/shoaibismail18/Portfolio_website'  // Change to your repo
+        REPO_URL = 'https://github.com/shoaibismail18/Portfolio_website.git'  // Change to your repo
     }
 
     stages {
