@@ -1,0 +1,35 @@
+pipeline {
+    agent any  // Runs on any available Jenkins agent
+
+    environment {
+        REPO_URL = 'https://github.com/shoaibismail18/Portfolio_website'  // Change to your repo
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'github-pat', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
+                    sh 'git clone https://${GIT_USER}:${GIT_TOKEN}@${REPO_URL}'
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Building the Portfolio Website...'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying to the server...'
+            }
+        }
+    }
+}
