@@ -8,9 +8,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'github-pat', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
-                    sh 'git clone https://${GIT_USER}:${GIT_TOKEN}@${REPO_URL}'
-                }
+                sh 'git clone ${REPO_URL}'
             }
         }
 
