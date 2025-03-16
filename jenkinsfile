@@ -33,9 +33,11 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 echo "Pushing Docker Image to Docker Hub..."
-                withDockerRegistry([credentialsId: 'docker-hub-credentials', url: '']) {
-                    sh "docker login -u shoaibismail18 -p YOUR_DOCKERHUB_PASSWORD"
-                    sh "docker push $DOCKER_IMAGE"
+                withCredentials([string(credentialsId: 'docker-hub-token', variable: 'DOCKER_TOKEN')]) {
+                    sh '''
+                    echo "$DOCKER_TOKEN" | docker login -u shoaibismail18 --password-stdin
+                    docker push $DOCKER_IMAGE
+                    '''
                 }
             }
         }
