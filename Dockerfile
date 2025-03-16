@@ -1,25 +1,24 @@
-# Stage 1: Use Alpine to install Nginx and fetch the website code
-FROM alpine:latest as builder
+# Use Nginx Alpine as a lightweight base image
+FROM nginx:alpine as builder
 
-# Install necessary packages
-RUN apk add --no-cache git nginx
+# Remove default nginx content
+RUN rm -rf /usr/share/nginx/html/*
 
-# Clone the GitHub repository
-RUN git clone https://github.com/shoaibismail18/Portfolio_website /usr/share/nginx/html
+# Clone the GitHub repository directly into the web server directory
+RUN apk add --no-cache git && \
+    git clone https://github.com/shoaibismail18/Portfolio_website /usr/share/nginx/html
 
-# Stage 2: Use a minimal Debian-based distroless image with Nginx
-FROM gcr.io/distroless/base-debian12
+# Use a distroless image for final production
+FROM gcr.io/distroless/static:nonroot
 
-# Copy Nginx from the builder stage
+# Copy the Nginx binary and static website files from the builder stage
 COPY --from=builder /usr/sbin/nginx /usr/sbin/nginx
-COPY --from=builder /etc/nginx /etc/nginx
+COPY --from=builder /usr/lib /usr/lib
 COPY --from=builder /usr/share/nginx/html /usr/share/nginx/html
-
-# Copy the custom Nginx config file (ensure this file exists in your project)
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY --from=builder /etc/nginx /etc/nginx
 
 # Expose port 80 for web traffic
 EXPOSE 80
 
-# Start the Nginx server
+# Start Nginx server
 CMD ["/usr/sbin/nginx", "-g", "daemon off;"]
